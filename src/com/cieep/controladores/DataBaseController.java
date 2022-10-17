@@ -23,6 +23,7 @@ public class DataBaseController {
 
     private void inicializaTablas() throws SQLException {
         Connection connection = obtenerConexion();
+        //ESTO HAY QUE CORREGIRLO
         String query = "create table if not exists "+Constantes.TABLA_ANIMALES +
                 "    "+Constantes.ID_ANIMAL+" int PRIMARY KEY ,\n" +
                 "    "+Constantes.TIPO+" varchar(40) not null,\n" +
@@ -57,7 +58,7 @@ public class DataBaseController {
         preparedStatement.setInt(1,idAnimal);
 
         ResultSet rs = preparedStatement.executeQuery();
-        if(rs.first()){
+        if(rs.next()){
             return new Animal(
                     rs.getInt(Constantes.ID_ANIMAL),
                     rs.getString(Constantes.TIPO),
