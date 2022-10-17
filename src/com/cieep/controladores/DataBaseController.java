@@ -1,5 +1,6 @@
 package com.cieep.controladores;
 
+import com.cieep.bd.Constantes;
 import com.cieep.modelos.Animal;
 
 import java.sql.*;
@@ -22,13 +23,13 @@ public class DataBaseController {
 
     private void inicializaTablas() throws SQLException {
         Connection connection = obtenerConexion();
-        String query = "create table if not exists animales(\n" +
-                "    id_animal int PRIMARY KEY ,\n" +
-                "    tipo varchar(40) not null,\n" +
-                "    nombre varchar(40) not null,\n" +
-                "    color varchar(10),\n" +
-                "    edad int not null ,\n" +
-                "    num_enfermedades int not null \n" +
+        String query = "create table if not exists "+Constantes.TABLA_ANIMALES +
+                "    "+Constantes.ID_ANIMAL+" int PRIMARY KEY ,\n" +
+                "    "+Constantes.TIPO+" varchar(40) not null,\n" +
+                "    "+Constantes.NOMBRE+" varchar(40) not null,\n" +
+                "    "+Constantes.COLOR+" varchar(10),\n" +
+                "    "+Constantes.EDAD+" int not null ,\n" +
+                "    "+Constantes.NUM_ENFERMEDADES+" int not null \n" +
                 ");";
 
         Statement stm = connection.createStatement();
@@ -36,7 +37,7 @@ public class DataBaseController {
     }
 
     public int insertaAnimal(Animal animal, Connection connection) throws SQLException {
-        String query = "insert into animales values (?,?,?,?,?,?)";
+        String query = "insert into "+Constantes.TABLA_ANIMALES+" values (?,?,?,?,?,?)";
         PreparedStatement pstm = connection.prepareStatement(query);
         pstm.setInt(1,animal.getIdAnimal());
         pstm.setString(2,animal.getTipo());
@@ -46,6 +47,29 @@ public class DataBaseController {
         pstm.setInt(6,animal.getNumEnfermedades());
 
         return pstm.executeUpdate();
+
+    }
+
+    public Animal getAnimal(int idAnimal, Connection connection) throws SQLException {
+
+        String query = "Select * from "+Constantes.TABLA_ANIMALES+" where "+Constantes.ID_ANIMAL+" = ?";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setInt(1,idAnimal);
+
+        ResultSet rs = preparedStatement.executeQuery();
+        if(rs.first()){
+            return new Animal(
+                    rs.getInt(Constantes.ID_ANIMAL),
+                    rs.getString(Constantes.TIPO),
+                    rs.getString(Constantes.NOMBRE),
+                    rs.getString(Constantes.COLOR),
+                    rs.getInt(Constantes.EDAD),
+                    rs.getInt(Constantes.NUM_ENFERMEDADES)
+            );
+
+        }
+        return null;
+
 
     }
 
