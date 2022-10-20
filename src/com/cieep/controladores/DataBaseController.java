@@ -2,6 +2,7 @@ package com.cieep.controladores;
 
 import com.cieep.bd.Constantes;
 import com.cieep.modelos.Animal;
+import com.cieep.modelos.Empleado;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -137,6 +138,42 @@ public class DataBaseController {
         int filas = pstm.executeUpdate();
         int otrasFilas = pstm.getUpdateCount();
         return filas;
+
+    }
+
+    ///////////////EMPLEADOS
+    public void inicializaEmpleados(Connection connection) throws SQLException {
+        String query = "create table if not exists "+Constantes.TABLA_EMPLEADOS +"(\n"+
+                "    "+Constantes.DNI+" varchar(9) PRIMARY KEY ,\n" +
+                "    "+Constantes.EMPLEO+" varchar(40) not null,\n" +
+                "    "+Constantes.NOMBRE_EMPLEADO+" varchar(40) not null,\n" +
+                "    "+Constantes.HORAS_SEMANALES+" int\n" +
+                ");";
+
+        Statement stm = connection.createStatement();
+        stm.execute(query);
+    }
+
+    public int insertaEmpleado(Empleado empleado, Connection connection) throws SQLException {
+        String query = "insert into "+Constantes.TABLA_EMPLEADOS+" values (?,?,?,?)";
+        PreparedStatement pstm = connection.prepareStatement(query);
+        pstm.setString(1,empleado.getDni());
+        pstm.setString(2,empleado.getEmpleo());
+        pstm.setString(3,empleado.getNombre());
+        pstm.setInt(4,empleado.getHoras_semanales());
+
+        return pstm.executeUpdate();
+    }
+
+    public boolean updateEmpleado(Empleado empleado, Connection connection) throws SQLException {
+        String query= "update "+Constantes.TABLA_EMPLEADOS+" set "+Constantes.EMPLEO+" = ?, "+Constantes.NOMBRE_EMPLEADO+" = ?," +
+                " "+Constantes.HORAS_SEMANALES+" = ? where "+Constantes.DNI+" = ?;";
+        PreparedStatement pstm = connection.prepareStatement(query);
+        pstm.setString(1, empleado.getEmpleo());
+        pstm.setString(2, empleado.getNombre());
+        pstm.setInt(3,empleado.getHoras_semanales());
+        pstm.setString(4, empleado.getDni());
+
 
     }
 
